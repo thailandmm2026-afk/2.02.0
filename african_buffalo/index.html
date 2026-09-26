@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>African Buffalo</title>
+  <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,minimum-scale=1,maximum-scale=1,viewport-fit=cover">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="screen-orientation" content="landscape">
+  <meta name="x5-orientation" content="landscape">
+  <link rel="stylesheet" type="text/css" href="style-mobile.f044d.css">
+  <link rel="icon" href="favicon.8de18.ico">
+  <style>
+    html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#f7f8fa}
+    #GameDiv{position:relative;width:100%;height:100%;background:#f7f8fa}
+    #GameCanvas{width:100%;height:100%;display:block;background:#f7f8fa}
+    #af-loading{position:absolute;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#f7f8fa;font-family:Arial,sans-serif;color:#172033;overflow:hidden}
+    #af-loading.has-custom-image:after{content:"";position:absolute;inset:0;background:rgba(255,255,255,.16);pointer-events:none}
+    #af-loading:before{content:"";position:absolute;inset:-12%;pointer-events:none;background:var(--af-custom-bg,none) center/cover no-repeat;transform:rotate(-6deg) scale(1.12);transform-origin:center;display:none}
+    #af-loading.has-custom-image:before{display:block}
+    #af-loading>*{position:relative;z-index:1}
+    #af-loading>*{position:relative;z-index:1}
+    #af-sub{font-size:12px;margin-bottom:14px;color:#64748b;letter-spacing:1px}
+    #af-loading.has-custom-image #af-sub,#af-loading.has-custom-image #af-percent{color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.7)}
+    #af-bar{width:min(62vw,420px);height:6px;border:0;border-radius:99px;background:#e2e8f0;overflow:hidden;margin-top:0}
+    #af-bar span{display:block;height:100%;width:8%;background:#334155;border-radius:99px;transition:width .25s ease}
+    #af-loading.has-custom-image #af-bar{background:rgba(255,255,255,.45)}
+    #af-loading.has-custom-image #af-bar span{background:#fff}
+    #af-percent{font-size:11px;color:#94a3b8;letter-spacing:2px;margin-top:10px}
+  </style>
+</head>
+<body>
+  <div id="GameDiv">
+    <canvas id="GameCanvas" oncontextmenu="event.preventDefault()" tabindex="0"></canvas>
+    <div id="af-loading">
+      <div id="af-sub">Loading Game...</div>
+      <div id="af-bar"><span id="af-progress"></span></div>
+      <div id="af-percent">0%</div>
+    </div>
+  </div>
+  <script src="src/settings.03ed6.js"></script>
+  <script src="src/flask-game-bridge.js"></script>
+  <script src="main.f76b9.js"></script>
+  <script>
+    (function(){
+      var overlay=document.getElementById('af-loading');
+      var bar=document.getElementById('af-progress');
+      var percent=document.getElementById('af-percent');
+      var started=Date.now();
+      fetch('/api/settings').then(function(r){return r.json()}).then(function(s){
+        if(s.african_buffalo_logo && overlay){
+          var imageUrl=String(s.african_buffalo_logo).replace(/"/g,'');
+          overlay.style.setProperty('--af-custom-bg','url("'+imageUrl+'")');
+          overlay.classList.add('has-custom-image');
+        }
+      }).catch(function(){});
+      function hide(){
+        if(overlay){overlay.style.opacity='0';overlay.style.transition='opacity .25s ease';setTimeout(function(){overlay.style.display='none'},280)}
+      }
+      window.__AfricanBuffaloHideLoading=hide;
+      var t=setInterval(function(){
+        var elapsed=Date.now()-started;
+        var pct=Math.min(88,8+elapsed/120);
+        if(bar)bar.style.width=pct+'%';
+        if(percent)percent.textContent=Math.round(pct)+'%';
+        try{
+          if(window.cc&&cc.director&&cc.director.getScene){
+            var sc=cc.director.getScene();
+            if(sc&&/Slot_AfricanBuffalo/i.test(sc.name||'')){if(bar)bar.style.width='100%';if(percent)percent.textContent='100%';hide();clearInterval(t);}
+          }
+        }catch(e){}
+      },120);
+      setTimeout(function(){clearInterval(t)},120000);
+      function loadScript(name,cb){var s=document.createElement('script');s.async=true;s.src=name;s.onload=function(){cb&&cb()};s.onerror=function(e){console.error('Failed to load '+name,e)};document.body.appendChild(s)}
+      loadScript('cocos2d-js-min.3af49.js',function(){
+        if(typeof CC_PHYSICS_BUILTIN!=='undefined'&&(CC_PHYSICS_BUILTIN||CC_PHYSICS_CANNON))loadScript('physics-min.js',window.boot);else window.boot();
+      });
+    })();
+  </script>
+</body>
+</html>
