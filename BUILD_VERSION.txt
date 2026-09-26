@@ -1,0 +1,3 @@
+GAG2026 latest build
+Version: buffalo-paytable-rates-ratescaled-no-free-scatter
+Includes: screenshot paytable values, authoritative total-bet payout scaling (bet / 80), calibrated server-side RTP gate, exact wallet/display win amount, image-only admin icons, and no Free Scatter feature.
